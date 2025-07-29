@@ -1,0 +1,8 @@
+declare module 'element-plus'
+declare module 'vue-pdf'
+declare module 'vue3-pdfjs/esm'
+declare module 'pdfjs-dist/legacy/build/pdf.worker.entry'
+declare module 'pdfjs-dist'
+declare module '@renderer/assets/pdfjs-dist/legacy/build/pdf.js'
+declare module '@renderer/assets/pdfjs-dist/legacy/build/pdf.worker.entry'
+declare module '@renderer/assets/pdfjs-dist/legacy/build/pdf.worker.js'
