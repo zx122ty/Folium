@@ -26,12 +26,19 @@
 import { nextTick } from 'vue'
 import { Close, Plus } from '@element-plus/icons-vue'
 import { useAppStore } from '@renderer/store'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useThemeStore } from '@renderer/store/LayoutTheme'
+import { ElMessageBox, ElMessage } from 'element-plus'
+import { useDrawDataStore } from '@renderer/store/DrawData'
+
 const themeStore = useThemeStore()
+const drawDataStore = useDrawDataStore()
+
+//console.log('Store methods:', Object.keys(drawDataStore))
 
 const appStore = useAppStore()
 const router = useRouter()
+const route = useRoute()
 
 const switchTab = async (id) => {
   appStore.setActiveTab(id)
@@ -56,10 +63,103 @@ const switchTab = async (id) => {
 // }
 
 // Toolbar.vue 修改 closeTab 函数
-const closeTab = (id) => {
+const closeTab = async (id) => {
   const currentIndex = appStore.tabs.findIndex((tab) => tab.id === id)
   const willActivateTab = appStore.tabs[currentIndex - 1] || appStore.tabs[currentIndex + 1]
 
+  // --- 新增逻辑：弹出确认框 ---
+  const tabToClose = appStore.tabs.find((tab) => tab.id === id)
+  // console.log('tabToClose:', tabToClose)
+  console.log('route:', route.path)
+  //tabToClose && (tabToClose.pdfUrl || tabToClose.title !== 'New Tab')
+  if (tabToClose.id !== '1' && route.path !== '/base') {
+    // 如果标签页有内容（PDF或非默认名称）
+    try {
+      await ElMessageBox.confirm('Do you want to save the drawing data of this tab?', 'Close', {
+        confirmButtonText: 'Save',
+        cancelButtonText: "Don't save",
+        type: 'warning'
+      })
+      // 用户点击了“保存”
+      //  console.log('User chose to save data for tab:', id)
+      drawDataStore.triggerCloseSave()
+      await nextTick()
+      // 2. 从 Store 获取即将关闭标签页的所有绘图数据
+      const drawingsToSave = drawDataStore.drawings[id] // 获取该 tabId 下的所有数据
+      // console.log('drawingsToSave:', drawingsToSave)
+      if (drawingsToSave) {
+        const pdfUrl = tabToClose.pdfUrl
+        console.log('tabToClose.pdfUrl:', tabToClose.pdfUrl)
+        let pdfFileSystemPath = ''
+
+        // 尝试从 file:// URL 中提取文件系统路径
+        if (pdfUrl && pdfUrl.startsWith('file://')) {
+          // 简单处理，对于 Windows 路径可能需要额外处理 file:///C:/... 的情况
+          pdfFileSystemPath = decodeURIComponent(pdfUrl.substring(7)) // 去掉 'file://' 前缀
+          // 在 Windows 上，可能需要去掉额外的 '/'
+          if (
+            window.process &&
+            window.process.platform === 'win32' &&
+            pdfFileSystemPath.startsWith('/')
+          ) {
+            pdfFileSystemPath = pdfFileSystemPath.substring(1)
+          }
+        }
+
+        if (!pdfFileSystemPath) {
+          console.warn('Could not extract file system path from pdfUrl:', pdfUrl)
+          // 可以选择不保存，或者保存一个不包含 pdfPath 的文件（但打开时就无法自动加载PDF了）
+          // 这里我们选择提示用户并继续（保存不完整的数据）
+          ElMessage.warning(
+            'Unable to obtain the PDF file path. The saved file may not be automatically associated with the PDF.'
+          )
+        }
+
+        // 3. 包装数据，包含 PDF 路径
+        const dataToSave = {
+          pdfPath: pdfFileSystemPath, // 添加 PDF 文件系统路径
+          drawings: drawingsToSave, // 原有的绘图数据 ({ pdfUrl: { pageNum: ... } })
+          // 可以添加其他元数据
+          savedAt: new Date().toISOString(),
+          appVersion: '1.0.0' // 示例
+        }
+
+        // 3. 序列化数据
+        const serializedData = JSON.stringify(dataToSave, null, 2) // 格式化输出，便于调试
+        const fileName = tabToClose.pdfName
+          ? `${tabToClose.pdfName}_drawings`
+          : `Tab_${id}_drawings`
+
+        // 4. 调用主进程保存文件 (通过 preload 暴露的 API)
+        if (window.Myapi && typeof window.Myapi.saveDrawingsToFile === 'function') {
+          const success = await window.Myapi.saveDrawingsToFile(serializedData, fileName)
+          if (success) {
+            console.log('Drawings saved successfully for tab:', id)
+          } else {
+            console.warn('Drawings save was cancelled or failed for tab:', id)
+            // 可以选择在这里 return 或继续关闭标签页
+          }
+        } else {
+          console.error('Myapi.saveDrawingsToFile is not available!')
+          ElMessage.error('Save function is unavailable. Please check the configuration.')
+          // 可以选择在这里 return 或继续关闭标签页
+        }
+      } else {
+        // console.log('No drawings found to save for tab:', id)
+        ElMessage.warning('No drawings found to save')
+      }
+    } catch (error) {
+      // 用户点击了“取消”或关闭了对话框
+      if (error === 'cancel' || error === 'close') {
+        console.log('User cancelled save for tab:', id)
+        // 不执行任何操作，继续关闭流程
+      } else {
+        // 其他错误
+        console.error('Error during save confirmation:', error)
+      }
+    }
+  }
+  // --- 结束新增逻辑 ---
   // 先删除标签页
   appStore.removeTab(id)
 

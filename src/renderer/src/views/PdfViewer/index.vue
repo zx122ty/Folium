@@ -298,7 +298,9 @@
               @navigate="jumpToOutlineDestination"
             />
           </div>
-          <div v-else class="no-outline">本文档没有可用的目录结构</div>
+          <div v-else class="no-outline">
+            This document does not have an available table of contents
+          </div>
         </div>
       </el-scrollbar>
 
@@ -395,9 +397,9 @@
           <el-scrollbar height="590px">
             <div class="total-settings">
               <!-- 上半部分：形状设置 -->
-              <h2>💓 感谢使用(*^-^)ρ 🎉</h2>
+              <h2>💓 Thank you for using(*^-^)ρ 🎉</h2>
               <div class="shape-settings">
-                <h3 style="margin-bottom: 5px; margin-top: 5px">联系我📞:</h3>
+                <h3 style="margin-bottom: 5px; margin-top: 5px">Contact me📞:</h3>
                 <div>
                   <span><b>Email📧:</b> sinceresitzx@qq.com</span>
                 </div>
@@ -674,81 +676,139 @@
       </button>
 
       <!-- 总设置按钮 -->
-      <el-popover placement="top" width="400px" trigger="click">
+      <el-popover placement="top" width="420px" trigger="click">
         <template #reference>
           <button class="tool-button">
             <el-icon :size="16"><Setting /></el-icon>
           </button>
         </template>
 
-        <el-scrollbar height="600px">
+        <el-scrollbar height="500px">
           <div class="total-settings">
-            <!-- 上半部分：形状设置 -->
-            <div class="shape-settings">
-              <h4>形状设置</h4>
-              <el-checkbox v-model="shapeSettings.fill">填充形状</el-checkbox>
+            <!-- 上半部分：Shape Settings -->
+            <div class="settings-section">
+              <h3 class="section-title">🎨 Shape Settings</h3>
               <div class="setting-item">
-                <span>边框粗细:</span>
-                <el-slider v-model="shapeSettings.borderWidth" :min="1" :max="20" />
+                <el-checkbox v-model="shapeSettings.fill" class="modern-checkbox">
+                  Fill Shape
+                </el-checkbox>
               </div>
               <div class="setting-item">
-                <span>透明度:</span>
-                <el-slider v-model="shapeSettings.opacity" :min="0.01" :max="1" :step="0.01" />
+                <label class="setting-label">Border Width</label>
+                <div class="slider-with-value">
+                  <el-slider
+                    v-model="shapeSettings.borderWidth"
+                    :min="1"
+                    :max="20"
+                    class="modern-slider"
+                  />
+                  <span class="slider-value">{{ shapeSettings.borderWidth }}px</span>
+                </div>
+              </div>
+              <div class="setting-item">
+                <label class="setting-label">Opacity</label>
+                <div class="slider-with-value">
+                  <el-slider
+                    v-model="shapeSettings.opacity"
+                    :min="0.01"
+                    :max="1"
+                    :step="0.01"
+                    class="modern-slider"
+                  />
+                  <span class="slider-value">{{ (shapeSettings.opacity * 100).toFixed(0) }}%</span>
+                </div>
               </div>
             </div>
-            <!-- 分隔线 -->
-            <el-divider />
 
-            <!-- 中间部分：文字设置 -->
-            <div class="text-settings">
-              <h4>文字设置</h4>
+            <!-- Divider -->
+            <div class="divider-line"></div>
+
+            <!-- Middle part: Text Settings -->
+            <div class="settings-section">
+              <h3 class="section-title">🔤 Text Settings</h3>
               <div class="setting-item">
-                <span>字体:</span>
-                <el-select v-model="textSettings.fontFamily" size="small">
+                <label class="setting-label">Font Family</label>
+                <el-select v-model="textSettings.fontFamily" size="small" class="modern-select">
                   <el-option value="Arial">Arial</el-option>
                   <el-option value="Times New Roman">Times New Roman</el-option>
                   <el-option value="Courier New">Courier New</el-option>
-                  <el-option value="SimSun">宋体</el-option>
-                  <el-option value="Microsoft YaHei">微软雅黑</el-option>
+                  <el-option value="SimSun">SimSun</el-option>
+                  <el-option value="Microsoft YaHei">Microsoft YaHei</el-option>
                 </el-select>
               </div>
               <div class="setting-item">
-                <span>大小:</span>
-                <el-slider v-model="textSettings.fontSize" :min="8" :max="72" />
+                <label class="setting-label">Font Size</label>
+                <div class="slider-with-value">
+                  <el-slider
+                    v-model="textSettings.fontSize"
+                    :min="8"
+                    :max="72"
+                    class="modern-slider"
+                  />
+                  <span class="slider-value">{{ textSettings.fontSize }}px</span>
+                </div>
               </div>
               <div class="setting-item">
-                <span>粗细:</span>
-                <el-radio-group v-model="textSettings.fontWeight" size="small">
-                  <el-radio-button value="normal">常规</el-radio-button>
-                  <el-radio-button value="bold">加粗</el-radio-button>
+                <label class="setting-label">Font Weight</label>
+                <el-radio-group
+                  v-model="textSettings.fontWeight"
+                  size="small"
+                  class="modern-radio-group"
+                >
+                  <el-radio-button value="normal">Normal</el-radio-button>
+                  <el-radio-button value="bold">Bold</el-radio-button>
                 </el-radio-group>
               </div>
               <div class="setting-item">
-                <el-checkbox v-model="textSettings.underline">下划线</el-checkbox>
+                <el-checkbox v-model="textSettings.underline" class="modern-checkbox">
+                  Underline
+                </el-checkbox>
               </div>
               <div class="setting-item">
-                <el-checkbox v-model="textSettings.hasBackground">背景</el-checkbox>
-                <el-color-picker
-                  v-model="textSettings.backgroundColor"
-                  size="small"
-                  :disabled="!textSettings.hasBackground"
-                />
+                <div class="color-setting-row">
+                  <el-checkbox v-model="textSettings.hasBackground" class="modern-checkbox">
+                    Background
+                  </el-checkbox>
+                  <el-color-picker
+                    v-model="textSettings.backgroundColor"
+                    size="small"
+                    :disabled="!textSettings.hasBackground"
+                    class="modern-color-picker"
+                  />
+                </div>
               </div>
             </div>
 
-            <!-- 分隔线 -->
-            <el-divider />
+            <!-- Divider -->
+            <div class="divider-line"></div>
 
-            <!-- 下半部分：画笔设置 -->
-            <div class="brush-settings">
-              <h4>画笔设置</h4>
+            <!-- Bottom part: Brush Settings -->
+            <div class="settings-section">
+              <h3 class="section-title">🖌️ Brush Settings</h3>
               <div class="setting-item">
-                <span>画笔粗细:</span>
-                <el-slider v-model="brushSettings.size" :min="1" :max="50" />
+                <label class="setting-label">Brush Size</label>
+                <div class="slider-with-value">
+                  <el-slider
+                    v-model="brushSettings.size"
+                    :min="1"
+                    :max="50"
+                    class="modern-slider"
+                  />
+                  <span class="slider-value">{{ brushSettings.size }}px</span>
+                </div>
               </div>
               <div class="setting-item">
-                <span>透明度:</span>
-                <el-slider v-model="brushSettings.opacity" :min="0.01" :max="1" :step="0.01" />
+                <label class="setting-label">Opacity</label>
+                <div class="slider-with-value">
+                  <el-slider
+                    v-model="brushSettings.opacity"
+                    :min="0.01"
+                    :max="1"
+                    :step="0.01"
+                    class="modern-slider"
+                  />
+                  <span class="slider-value">{{ (brushSettings.opacity * 100).toFixed(0) }}%</span>
+                </div>
               </div>
             </div>
           </div>
@@ -794,12 +854,18 @@ import {
 import PdfOutlineItem from './Outline/PdfOutlineItem.vue'
 import Toolbar from './Toolbar.vue'
 
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter, onBeforeRouteUpdate } from 'vue-router'
 const router = useRouter()
 const route = useRoute()
 
 import { useAppStore } from '@renderer/store'
 const appStore = useAppStore()
+
+// Pinia 存储绘图数据--------
+import { useDrawDataStore } from '@renderer/store/DrawData'
+const drawDataStore = useDrawDataStore()
+
+//----------
 
 const loadPdfFile = async (routerUrl) => {
   try {
@@ -910,24 +976,29 @@ watch(
   }
 )
 // 监听标签页切换
-watch(
-  () => appStore.activeTabId,
-  async (newId) => {
-    const activeTab = appStore.activeTab
-    if (activeTab?.pdfUrl) {
-      // 确保路由同步
-      if (route.path !== '/PdfViewer' || route.query.pdfUrl !== activeTab.pdfUrl) {
-        router.push({
-          path: '/PdfViewer',
-          query: {
-            pdfUrl: activeTab.pdfUrl,
-            tabId: newId
-          }
-        })
-      }
-    }
-  }
-)
+// watch(
+//   () => appStore.activeTabId,
+//   async (newId) => {
+//     saveCurrentPage()
+
+//     const activeTab = appStore.activeTab
+//     if (activeTab?.pdfUrl) {
+//       // 确保路由同步
+//       if (route.path !== '/PdfViewer' || route.query.pdfUrl !== activeTab.pdfUrl) {
+//         router.push({
+//           path: '/PdfViewer',
+//           query: {
+//             pdfUrl: activeTab.pdfUrl,
+//             tabId: newId
+//           }
+//         })
+//       }
+//     }
+//     console.log('change tabs')
+
+//     loadCurrentPage()
+//   }
+// )
 
 // import { useRouter } from 'vue-router'
 // const router = useRouter()
@@ -961,6 +1032,7 @@ var createLoadingTask = function createLoadingTask(src) {
 
 function pageUp() {
   if (pdfState.pageNum > 1) {
+    console.log('page up')
     saveCurrentPage()
 
     pdfState.pageNum--
@@ -971,6 +1043,7 @@ function pageUp() {
 
 function pageDown() {
   if (pdfState.pageNum < pdfState.numPages) {
+    console.log('page down')
     saveCurrentPage()
     pdfState.pageNum++
     jumpPage.value = pdfState.pageNum
@@ -1005,6 +1078,7 @@ const jumpPage = ref('1') // 保持字符串类型
 function jumpToPage() {
   const pageNum = Number(jumpPage.value) // 转换为数字
   if (pageNum <= pdfState.numPages && pageNum > 0) {
+    console.log('jump to page')
     saveCurrentPage()
     pdfState.pageNum = pageNum
     loadCurrentPage()
@@ -1020,10 +1094,17 @@ watch(
     jumpPage.value = String(val)
   }
 )
+
 watch(
-  () => pdfState.pageNum,
-  (newPage, oldPage) => {
-    if (oldPage) saveCurrentPage()
+  () => pdfState.pageNum, // 监听页码
+  (newPageNum, oldPageNum) => {
+    // console.log(`Page changed from ${oldPageNum} to ${newPageNum}`);
+    if (oldPageNum !== undefined && oldPageNum !== newPageNum) {
+      // 保存旧页面数据
+      console.log('监听页码')
+      saveCurrentPage()
+    }
+    // 加载新页面数据
     loadCurrentPage()
   }
 )
@@ -1071,10 +1152,26 @@ import { PDFDocument, rgb } from 'pdf-lib'
 import download from 'downloadjs'
 
 async function PDFDownload() {
+  console.log('PDFDownload')
   saveCurrentPage()
-  // console.log("layers.value----:", layers.value);
-  // console.log("pageDrawings.value----:", pageDrawings.value);
-  // console.group("开始导出PDF流程");
+
+  // --- 在 PDF 下载逻辑开始前，确保使用的是 Store 中的完整数据 ---
+  const currentTabId = appStore.activeTabId
+  const currentPdfUrl = pdfState.pdfSource.url
+  let finalPageDrawings = pageDrawings.value
+
+  if (currentTabId && currentPdfUrl) {
+    // 如果有 Store 数据，优先使用 Store 中该 Tab 的所有页面数据
+    const storedTabPdfData = drawDataStore.drawings[currentTabId]?.[currentPdfUrl]
+    if (storedTabPdfData) {
+      // 合并 Store 数据到组件状态（或直接在后续逻辑中使用 storedTabData）
+      // 这里选择合并到 pageDrawings.value 以兼容原有逻辑
+      Object.assign(pageDrawings.value, storedTabPdfData)
+      finalPageDrawings = pageDrawings.value
+      // console.log("PDF导出时使用了 Store 中的数据:", finalPageDrawings);
+    }
+  }
+
   try {
     //console.log("1. 准备获取原始PDF...");
     const response = await fetch(pdfState.pdfSource.url)
@@ -1109,7 +1206,7 @@ async function PDFDownload() {
       // console.log(`页面尺寸: ${width}x${height}`);
 
       // 获取该页的绘图数据
-      const pageData = pageDrawings.value[pageNumber] || {
+      const pageData = finalPageDrawings[pageNumber] || {
         layers: [
           {
             visible: true,
@@ -1245,7 +1342,7 @@ function PDFPrint() {
   vuePdfRef.value.print(300, getPDFFileName(), true)
 }
 
-//缩略图
+//缩略图-----------
 const showThumbnails = ref(true) // 控制缩略图显示状态
 
 const loadThumbnails = async () => {
@@ -1384,7 +1481,7 @@ onUnmounted(() => {
   }
 })
 
-//多图层绘制相关
+//多图层绘制相关---------------
 
 //模式切换
 const isDrawingMode = ref(false)
@@ -2696,8 +2793,8 @@ const createTextInput = (x, y, layerIndex) => {
 
   // 计算相对于文档的位置
   textInputPosition.value = {
-    x: x + rect.left,
-    y: y + rect.top
+    x: x, //+ rect.left,
+    y: y //+ rect.top
   }
 
   textInputVisible.value = true
@@ -2742,8 +2839,8 @@ const saveTextAnnotation = () => {
 
     if (canvas) {
       const rect = canvas.getBoundingClientRect()
-      const x = textInputPosition.value.x - rect.left
-      const y = textInputPosition.value.y - rect.top
+      const x = textInputPosition.value.x //- rect.left
+      const y = textInputPosition.value.y //- rect.top
 
       const newTextElement = {
         type: 'text',
@@ -2869,7 +2966,7 @@ const drawText = (ctx, textElement) => {
   ctx.restore()
 }
 
-//划词翻译
+//划词翻译------------------
 
 // 新增划词翻译相关状态
 const isTranslationMode = ref(false)
@@ -2922,7 +3019,7 @@ const translationSettings = reactive({
 
   openai: {
     model: 'gpt-3.5-turbo',
-    Content: '',
+    // Content: '',
     MyPrompt: `You are a helpful assistant, help me translate this sentence or word into Chinese`
   }
 })
@@ -3268,7 +3365,7 @@ ${MyPrompt.value}
 Paper content:
 ${content}
 `
-    const data = await getCompletion(text)
+    const data = await getCompletion({ text, translationSettings })
     return formatResult(data)
   }
 }
@@ -3701,6 +3798,7 @@ const processOutlineItems = (items) => {
 
 // Method to navigate to outline destination
 const jumpToOutlineDestination = async (dest) => {
+  console.log('jumpToOutlineDestination----')
   saveCurrentPage()
   try {
     const loadingTask = getDocument(pdfState.pdfSource)
@@ -3975,15 +4073,19 @@ const initPageDrawings = (pageNum) => {
   }
 }
 
-// 切换页面时保存当前状态
+// 切换页码时保存当前状态
 const switchPage = (newPage) => {
-  // 保存当前页状态
-  saveCurrentPage()
+  console.log(`[switchPage] Switching from page ${pdfState.pageNum} to page ${newPage}`)
 
-  // 更新页码
+  // 1. 保存当前页状态 (使用当前的 tabId 和 pdfUrl)
+  // 这里可以直接调用 saveCurrentPage，因为它是在页面内操作
+  saveCurrentPage()
+  // 或者更明确: performSaveToStore(appStore.activeTabId, route.query.pdfUrl || pdfState.pdfSource?.url, pdfState.pageNum);
+
+  // 2. 更新页码
   pdfState.pageNum = newPage
 
-  // 加载新页面数据
+  // 3. 加载新页面数据
   loadCurrentPage()
 }
 
@@ -4000,32 +4102,316 @@ const switchPage = (newPage) => {
 //   });
 // };
 
-const saveCurrentPage = () => {
-  pageDrawings.value[pdfState.pageNum] = {
+onBeforeRouteUpdate(async (to, from) => {
+  //console.log('[onBeforeRouteUpdate] Route changing from', from.fullPath, 'to', to.fullPath)
+  // console.log('componentTabId-----------:', componentTabId)
+  const currentTabId = componentTabId || from.query.tabId || appStore.activeTabId ///appStore.activeTabId // 路由更新前，activeTabId 仍然是当前标签页的ID
+  const currentPdfUrl = from.query.pdfUrl || pdfState.pdfSource?.url // 从即将离开的路由获取URL
+  const currentPageNum = pdfState.pageNum // 当前页码
+
+  // console.log(
+  //   `[onBeforeRouteUpdate] Saving data for Tab ${currentTabId}, PDF ${currentPdfUrl}, Page ${currentPageNum} before navigating.`
+  // )
+
+  // 使用明确参数调用保存函数
+  performSaveToStore(currentTabId, currentPdfUrl, currentPageNum)
+  // 或者如果你修改了 saveCurrentPage: saveCurrentPage(currentTabId, currentPdfUrl);
+
+  // 允许路由更新继续
+  return true
+})
+
+const componentTabId = appStore.activeTabId // 捕获当前（即将关联的PDF的）标签页ID
+
+const saveCurrentPage = (targetTabId = null, targetPdfUrl = null) => {
+  // 如果没有传参，则回退到当前状态（用于页面内操作，如切换图层）
+  const finalTabId = targetTabId || appStore.activeTabId
+  const finalPdfUrl = targetPdfUrl || route.query.pdfUrl || pdfState.pdfSource?.url
+  const currentPageNum = pdfState.pageNum // 当前页码总是从状态获取
+
+  // console.log(
+  //   `saveCurrentPage called - Target Tab ID: ${finalTabId}, PDF URL: ${finalPdfUrl}, Page: ${currentPageNum}`
+  // )
+
+  if (finalTabId && finalPdfUrl) {
+    // 1. 保存到组件内部状态 (用于页面内快速切换)
+    pageDrawings.value[currentPageNum] = {
+      layers: layers.value.map((layer) => ({
+        ...layer,
+        shapes: [...layer.shapes] // 深拷贝 shapes 数组
+      })),
+      activeLayerIndex: activeLayerIndex.value
+    }
+
+    // 2. 保存到 Pinia Store (用于跨标签页/会话持久化)
+    // 确保保存的是传入或确定的 finalTabId 和 finalPdfUrl
+    drawDataStore.setDrawings(
+      finalTabId,
+      finalPdfUrl,
+      currentPageNum,
+      pageDrawings.value[currentPageNum]
+    )
+    // console.log(
+    //   `Data SAVED to Store for Tab: ${finalTabId}, PDF: ${finalPdfUrl}, Page: ${currentPageNum}`
+    // )
+    // console.log('drawDataStore.drawings after save:', toRaw(drawDataStore.drawings)); // 使用 toRaw 查看原始数据
+  } else {
+    console.warn('saveCurrentPage: Missing finalTabId or finalPdfUrl. Save skipped.', {
+      finalTabId,
+      finalPdfUrl
+    })
+  }
+}
+
+const performSaveToStore = (tabId, pdfUrl, pageNum) => {
+  if (!tabId || !pdfUrl || pageNum === undefined) {
+    console.warn('performSaveToStore: Invalid parameters. Save skipped.', {
+      tabId,
+      pdfUrl,
+      pageNum
+    })
+    return
+  }
+
+  // 1. 保存到组件内部状态 (用于页面内快速切换)
+  pageDrawings.value[pageNum] = {
     layers: layers.value.map((layer) => ({
       ...layer,
       shapes: [...layer.shapes] // 深拷贝 shapes 数组
     })),
     activeLayerIndex: activeLayerIndex.value
   }
+
+  // 2. 保存到 Pinia Store
+  drawDataStore.setDrawings(tabId, pdfUrl, pageNum, pageDrawings.value[pageNum])
+  // console.log(
+  //   `[performSaveToStore] Data SAVED to Store for Tab: ${tabId}, PDF: ${pdfUrl}, Page: ${pageNum}`
+  // )
+  // console.log('drawDataStore.drawings:', drawDataStore.drawings)
 }
 
+// --- 新增：监听 IfCloseSave 状态 ---
+watch(
+  () => drawDataStore.ifCloseSave, // 监听 Store 中的状态
+  (newValue) => {
+    if (newValue === true) {
+      console.log('[PdfViewer] Received close-save trigger, saving current page...')
+      // 调用现有的 saveCurrentPage 函数
+      saveCurrentPage()
+      console.log('[PdfViewer] Current page saved due to close-save trigger.')
+
+      // --- 关键修改点：重置状态 ---
+      drawDataStore.resetCloseSave() // 或者直接 drawDataStore.ifCloseSave = false;
+      console.log('[PdfViewer] Close-save trigger reset.')
+    }
+  }
+)
+// const loadCurrentPage = () => {
+//   const pageData = currentPageData.value
+//   // console.log("run loadCurrenPage,get currentOageData", pageData);
+//   // 确保每个图层都有 shapes 数组
+//   layers.value = pageData.layers.map((layer) => ({
+//     ...layer,
+//     shapes: layer.shapes || [] // 如果 shapes 不存在则初始化为空数组
+//   }))
+
+//   activeLayerIndex.value = pageData.activeLayerIndex || 0 // 默认激活第一个图层
+
+//   nextTick(() => {
+//     initCanvases()
+//     redrawAllVisibleLayers() // 改为调用新函数
+//   })
+// }
+
+// const loadCurrentPage = () => {
+//   const currentTabId = appStore.activeTabId // 获取当前标签页ID
+//   const currentPdfUrl = pdfState.pdfSource.url
+//   let pageData
+
+//   // 1. 尝试从 Pinia Store 加载数据
+//   if (currentTabId && currentPdfUrl) {
+//     console.log('here', currentPdfUrl)
+//     const storedData = drawDataStore.getDrawings(currentTabId, currentPdfUrl, pdfState.pageNum)
+//     if (storedData) {
+//       pageData = storedData
+//       // console.log("从 Pinia Store 加载了第", pdfState.pageNum, "页数据");
+//     }
+//   }
+
+//   // 2. 如果 Store 中没有，则从组件内部状态加载（或初始化）
+//   if (!pageData) {
+//     //console.log("here is loadCurrentPage");
+//     //console.log("run loadCurrenPage,get currentOageData", pageData);
+//     pageData = currentPageData.value // 这会触发 currentPageData 计算属性，如果不存在则初始化
+//   }
+
+//   console.log('pageData：', pageData)
+//   // 3. 更新组件状态
+//   // 确保每个图层都有 shapes 数组
+//   layers.value = pageData.layers.map((layer) => ({
+//     ...layer,
+//     shapes: layer.shapes || [] // 如果 shapes 不存在则初始化为空数组
+//   }))
+//   activeLayerIndex.value = pageData.activeLayerIndex || 0 // 默认激活第一个图层
+
+//   // 4. 初始化画布和重绘
+//   nextTick(() => {
+//     initCanvases()
+//     redrawAllVisibleLayers()
+//   })
+// }
 const loadCurrentPage = () => {
-  const pageData = currentPageData.value
-  // console.log("run loadCurrenPage,get currentOageData", pageData);
-  // 确保每个图层都有 shapes 数组
-  layers.value = pageData.layers.map((layer) => ({
+  const currentTabId = appStore.activeTabId
+  console.log('[loadCurrentPage] Loading for Tab ID:', currentTabId)
+
+  // --- 关键点：始终使用 route.query.pdfUrl 作为当前PDF的标识 ---
+  const currentPdfUrl = route.query.pdfUrl || pdfState.pdfSource?.url
+  console.log('[loadCurrentPage] Loading for PDF URL:', currentPdfUrl)
+
+  const currentPageNum = pdfState.pageNum
+
+  let pageDataToLoad = null
+
+  // 1. 严格根据 当前标签页ID 和 当前PDF URL 从 Pinia Store 加载数据
+  if (currentTabId && currentPdfUrl) {
+    const storedPageData = drawDataStore.getDrawings(currentTabId, currentPdfUrl, currentPageNum)
+    if (storedPageData) {
+      console.log(
+        '[loadCurrentPage] Loaded drawings from Store for Tab:',
+        currentTabId,
+        'PDF:',
+        currentPdfUrl,
+        'Page:',
+        currentPageNum
+      )
+      pageDataToLoad = storedPageData
+    } else {
+      console.log(
+        '[loadCurrentPage] No stored drawings found for Tab:',
+        currentTabId,
+        'PDF:',
+        currentPdfUrl,
+        'Page:',
+        currentPageNum,
+        '. Will initialize.'
+      )
+    }
+  } else {
+    console.log(
+      '[loadCurrentPage] Cannot load from store: Missing tabId or pdfUrl. TabId:',
+      currentTabId,
+      'PdfUrl:',
+      currentPdfUrl
+    )
+  }
+
+  // 2. 如果 Store 中没有找到，则初始化新的页面数据
+  if (!pageDataToLoad) {
+    console.log(
+      '[loadCurrentPage] Initializing new page data for Tab:',
+      currentTabId,
+      'PDF:',
+      currentPdfUrl,
+      'Page:',
+      currentPageNum
+    )
+    pageDataToLoad = {
+      layers: [
+        {
+          id: Date.now(),
+          visible: true,
+          name: '图层 1',
+          shapes: []
+        }
+      ],
+      activeLayerIndex: 0
+    }
+  }
+
+  // 3. 使用找到或初始化的数据来更新组件内部状态
+  layers.value = pageDataToLoad.layers.map((layer) => ({
     ...layer,
-    shapes: layer.shapes || [] // 如果 shapes 不存在则初始化为空数组
+    shapes: Array.isArray(layer.shapes) ? layer.shapes : []
   }))
+  activeLayerIndex.value = pageDataToLoad.activeLayerIndex ?? 0
 
-  activeLayerIndex.value = pageData.activeLayerIndex || 0 // 默认激活第一个图层
-
+  // 4. 初始化画布和重绘
   nextTick(() => {
     initCanvases()
-    redrawAllVisibleLayers() // 改为调用新函数
+    redrawAllVisibleLayers()
   })
 }
+
+watch(
+  () => route.query.pdfUrl,
+  async (newPdfUrl, oldPdfUrl) => {
+    console.log('PDF URL Watcher triggered. Old:', oldPdfUrl, 'New:', newPdfUrl)
+    await nextTick()
+    loadCurrentPage()
+  },
+  { flush: 'post' }
+)
+
+onUnmounted(() => {
+  // console.log('[onUnmounted] PDF Viewer onUnmounted for Tab ID:', componentTabId)
+
+  // 在组件卸载时保存数据，使用捕获的 ID 和当前的 PDF URL
+  const targetPdfUrl = route.query.pdfUrl || pdfState.pdfSource?.url
+  const currentPageNum = pdfState.pageNum
+
+  if (componentTabId && targetPdfUrl) {
+    // 使用明确参数调用保存函数
+    performSaveToStore(componentTabId, targetPdfUrl, currentPageNum)
+    // 或者如果你修改了 saveCurrentPage: saveCurrentPage(componentTabId, targetPdfUrl);
+    // console.log(
+    //   `[onUnmounted] Data saved for Tab: ${componentTabId}, PDF: ${targetPdfUrl}, Page: ${currentPageNum}`
+    // )
+  } else {
+    console.warn('[onUnmounted] Could not save data.', { componentTabId, targetPdfUrl })
+  }
+})
+
+// watch(
+//   () => appStore.activeTabId,
+//   (newId, oldId) => {
+//     if (oldId) {
+//       saveCurrentPage() // 保存旧标签页的当前页数据
+//     }
+//   },
+//   { flush: 'pre' }
+// ) // 在切换前触发
+// watch(
+//   // 监听器源：返回一个包含 pdfUrl 和 tabId 的对象
+//   () => ({
+//     pdfUrl: route.query.pdfUrl,
+//     tabId: appStore.activeTabId
+//   }),
+//   // 回调函数：当源变化时执行
+//   (newParams, oldParams) => {
+//     // console.log("Route/Tab changed. Old:", oldParams, "New:", newParams);
+//     // 如果是首次加载（oldParams 为空或未定义），不需要保存
+//     if (oldParams && (oldParams.pdfUrl || oldParams.tabId)) {
+//       // 在切换前保存当前页数据
+
+//       saveCurrentPage()
+//     }
+
+//     // 等待 DOM 更新和 pdfState 更新后加载新数据
+//     nextTick(() => {
+//       // 确保 pdfState.pdfSource.url 已经更新
+//       if (newParams.pdfUrl === pdfState.pdfSource.url && newParams.tabId === appStore.activeTabId) {
+//         // 加载新页面数据 (如果页码也变了，这个逻辑会由页码 watch 触发)
+//         // 如果只是 PDF/Tab 切换但页码相同，也需要重新加载
+//         console.log('加载数据前', newParams, '----', oldParams)
+//         loadCurrentPage()
+//       }
+//     })
+//   },
+//   // 选项
+//   { flush: 'post' } // 在 DOM 更新后执行，确保 pdfState 已同步
+// )
+
+//-------------------------
 
 // 修改获取当前页绘图数据的方法
 const getCurrentPageDrawings = () => {
@@ -4113,7 +4499,10 @@ watch(
 )
 
 // Initial load
-onMounted(() => {})
+onMounted(() => {
+  console.log('PDF Viewer onMounted for Tab ID:', componentTabId)
+  loadCurrentPage()
+})
 
 // 组件卸载时移除监听器
 onUnmounted(() => {
@@ -4703,31 +5092,153 @@ onUnmounted(() => {
 }
 
 .total-settings {
-  width: 90%;
-  padding-left: 10px;
-  /* padding: 5px; */
-  box-sizing: border-box; /* 确保 padding 和 border 包含在宽度内 */
-  /* 如果需要内边距 */
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 12px;
 }
 
+.settings-section {
+  margin-bottom: 25px;
+}
 /* :deep(.el-scrollbar) {
     height: 100%;
     padding: 0 0px;
 } */
 
-/* 添加设置项样式 */
-.setting-item {
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 15px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e9ecef;
   display: flex;
-  flex-direction: column;
-  margin-bottom: 15px;
+  align-items: center;
+  gap: 8px;
 }
 
-.setting-item span {
-  margin-bottom: 5px;
+/* 添加设置项样式 画笔设置开始 */
+.setting-item {
+  margin-bottom: 20px;
+  padding: 0 5px;
+}
+
+.setting-label {
+  display: block;
   font-size: 14px;
-  color: #666;
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 8px;
 }
 
+.slider-with-value {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modern-slider {
+  flex: 1;
+}
+
+.slider-value {
+  min-width: 40px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #495057;
+  background: #e9ecef;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.modern-select {
+  width: 100%;
+}
+
+.modern-radio-group {
+  width: 100%;
+}
+
+.modern-checkbox {
+  font-size: 14px;
+  color: #495057;
+  font-weight: 500;
+}
+
+.modern-checkbox :deep(.el-checkbox__input.is-checked .el-checkbox__inner) {
+  background-color: #3498db;
+  border-color: #3498db;
+}
+
+.modern-checkbox :deep(.el-checkbox__input.is-checked + .el-checkbox__label) {
+  color: #2c3e50;
+}
+
+.color-setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.modern-color-picker {
+  margin-left: auto;
+}
+
+.divider-line {
+  height: 1px;
+  background: linear-gradient(to right, transparent, #dee2e6, transparent);
+  margin: 25px 0;
+}
+
+/* Element UI 组件样式优化 */
+:deep(.el-select) {
+  width: 100%;
+}
+
+:deep(.el-slider__runway) {
+  background: #e9ecef;
+  border-radius: 3px;
+}
+
+:deep(.el-slider__bar) {
+  background: linear-gradient(90deg, #3498db, #2980b9);
+}
+
+:deep(.el-slider__button) {
+  border: 2px solid #3498db;
+  width: 16px;
+  height: 16px;
+  box-shadow: 0 2px 6px rgba(52, 152, 219, 0.3);
+}
+
+:deep(.el-radio-button__inner) {
+  border-radius: 6px !important;
+  border: 1px solid #dee2e6;
+  transition: all 0.3s ease;
+}
+
+:deep(.el-radio-button:first-child .el-radio-button__inner) {
+  border-radius: 6px 0 0 6px !important;
+}
+
+:deep(.el-radio-button:last-child .el-radio-button__inner) {
+  border-radius: 0 6px 6px 0 !important;
+}
+
+:deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
+  background: #3498db;
+  border-color: #3498db;
+  box-shadow: none;
+}
+
+:deep(.el-color-picker__trigger) {
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+}
+/* 画笔设置结束 */
 /* .brush-settings,
 .shape-settings {
   padding: 10px;

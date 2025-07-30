@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="license" />
   <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Mac-blue" alt="platform" />
   <img src="https://img.shields.io/badge/built%20with-Electron--Vite-purple" alt="built-with-electron-vite" />
-  <img src="https://img.shields.io/github/stars/your-repo/Folium?style=social" alt="github-stars" />
+  <!-- <img src="https://img.shields.io/github/stars/your-repo/Folium?style=social" alt="github-stars" /> -->
 </p>
 
 <p align="center">

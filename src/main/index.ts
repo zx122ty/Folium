@@ -5,6 +5,8 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/build/icons/png/1024x1024.png?asset'
 import { readPdf, getFolder, translateWithFreeDictionary } from './function'
 import { getCompletion } from './ai'
+import { writeDrawFile } from './writeFile'
+
 import { dialog } from 'electron'
 import fs from 'fs'
 import path from 'path'
@@ -80,16 +82,75 @@ function createWindow(): void {
 
   // 添加一个IPC处理程序
   ipcMain.handle('read-file', readPdf)
+  // ipcMain.handle('open-pdf-dialog', async () => {
+  //   const result = await dialog.showOpenDialog({
+  //     properties: ['openFile'],
+  //     filters: [
+  //       { name: 'PDF Files', extensions: ['pdf'] },
+  //       { name: 'draw data', extensions: ['drawdata'] },
+  //       { name: 'All Files', extensions: ['*'] }
+  //     ]
+  //   })
+  //   return result.filePaths[0] || null
+  // })
   ipcMain.handle('open-pdf-dialog', async () => {
     const result = await dialog.showOpenDialog({
       properties: ['openFile'],
       filters: [
         { name: 'PDF Files', extensions: ['pdf'] },
+        { name: '绘图数据文件', extensions: ['drawdata'] }, // 添加你的文件类型
         { name: 'All Files', extensions: ['*'] }
       ]
     })
-    return result.filePaths[0] || null
+
+    if (!result.canceled && result.filePaths.length > 0) {
+      const selectedPath = result.filePaths[0]
+      console.log('Selected file path in main:', selectedPath)
+
+      // --- 修改逻辑：区分处理 .drawdata 文件 ---
+      if (path.extname(selectedPath).toLowerCase() === '.drawdata') {
+        try {
+          const fileContent = await fs.promises.readFile(selectedPath, 'utf-8')
+          const drawingData = JSON.parse(fileContent)
+
+          // --- 核心修改点 ---
+          // 假设 .drawdata 文件结构为 { pdfPath: "实际PDF文件路径", drawings: { ... } }
+          // 你需要根据你实际保存的 .drawdata 文件结构来调整这里。
+          if (drawingData && drawingData.pdfPath && typeof drawingData.pdfPath === 'string') {
+            const pdfPath = drawingData.pdfPath // 提取 PDF 路径
+            const pdfUrl = `file://${pdfPath}` // 转换为 file:// URL
+            const drawings = drawingData.drawings || {} // 提取绘图数据
+
+            // 返回一个特殊结构，包含 PDF URL 和绘图数据
+            return {
+              type: 'drawdata',
+              pdfUrl: pdfUrl,
+              drawings: drawings,
+              // 可以添加其他元数据，如文件名等
+              sourceFileName: path.basename(selectedPath)
+            }
+          } else {
+            throw new Error("Invalid .drawdata file format: Missing or invalid 'pdfPath'.")
+          }
+        } catch (err: any) {
+          console.error('Failed to read or parse .drawdata file:', err)
+          dialog.showErrorBox('打开文件失败', `无法读取或解析绘图数据文件: ${err.message}`)
+          return { type: 'error', message: err.message } // 返回错误信息给渲染进程
+        }
+      } else {
+        // 处理普通的 PDF 文件
+        return {
+          type: 'pdf',
+          pdfUrl: `file://${selectedPath}`,
+          sourceFileName: path.basename(selectedPath)
+        }
+      }
+    }
+    // 用户取消选择
+    return { type: 'cancelled' }
   })
+
+  ipcMain.handle('save-drawings-dialog', writeDrawFile)
 
   ipcMain.handle('open-localFolder-dialog', getFolder)
 

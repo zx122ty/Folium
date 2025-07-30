@@ -62,6 +62,7 @@
             <div class="search-placeholder">
               <el-icon :size="40"><Search /></el-icon>
               <p>Search</p>
+              <p>还未开发...🥹</p>
             </div>
           </div>
         </el-scrollbar>

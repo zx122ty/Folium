@@ -32,7 +32,6 @@ export const useAppStore = defineStore('app', {
         route: '/base'
       })
       this.activeTabId = newId
-      // router.push('/base')
     },
     removeTab(id: string) {
       if (this.tabs.length <= 1) return

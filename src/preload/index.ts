@@ -63,20 +63,21 @@ interface PdfApi {
   // 新增的翻译方法
   translateWord: (word: string) => Promise<any>
   aiTranslate: (request: TranslationRequest) => Promise<any>
+
+  saveDrawingsToFile: (data: string, suggestedName: string) => Promise<boolean>
 }
 
-// Custom APIs for renderer
-// const api = {
-//   readPdf: (filePath: string) => {
-//     return ipcRenderer.invoke('read-file', filePath)
-//   },
-//   openPdfDialog: () => {
-//     return ipcRenderer.invoke('open-pdf-dialog')
-//   },
-//   getPdfFileData: (filePath: string) => {
-//     return ipcRenderer.invoke('get-pdf-file-data', filePath)
-//   }
-// }
+// --- 新增：保存绘图数据到文件的函数 ---
+const saveDrawingsToFile = async (data: string, suggestedName: string): Promise<boolean> => {
+  try {
+    // 调用主进程的 IPC 处理程序
+    const result = await ipcRenderer.invoke('save-drawings-dialog', data, suggestedName)
+    return result // 返回主进程处理的结果 (true/false)
+  } catch (error) {
+    console.error('Error in preload saveDrawingsToFile:', error)
+    return false // 发生错误则返回 false
+  }
+}
 
 // Custom APIs for renderer
 const api: PdfApi = {
@@ -87,7 +88,8 @@ const api: PdfApi = {
 
   // 新增的翻译方法实现
   translateWord: (word: string) => ipcRenderer.invoke('translate-word', word),
-  aiTranslate: (request: TranslationRequest) => ipcRenderer.invoke('get-completion', request)
+  aiTranslate: (request: TranslationRequest) => ipcRenderer.invoke('get-completion', request),
+  saveDrawingsToFile
 }
 
 // 暴露给渲染进程的类型声明
